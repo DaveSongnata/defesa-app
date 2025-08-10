@@ -9,3 +9,4 @@ export { DatePickerField } from './atoms/DatePickerField';
 export { SegmentedControl } from './molecules/SegmentedControl';
 export { CardPurchase } from './molecules/CardPurchase';
 export { HeaderWithBack } from './molecules/HeaderWithBack';
+export { BottomCTA } from './molecules/BottomCTA';

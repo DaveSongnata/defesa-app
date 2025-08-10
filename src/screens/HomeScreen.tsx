@@ -11,7 +11,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useDashboardViewModel } from '../viewmodels/useDashboardViewModel';
 import { usePurchasesListViewModel } from '../viewmodels/usePurchasesListViewModel';
-import { CardPurchase, SegmentedControl, TextInput } from '../components';
+import { CardPurchase, SegmentedControl, BottomCTA } from '../components';
 
 interface StatCardProps {
   title: string;
@@ -90,6 +90,7 @@ export function HomeScreen({ navigation }: Props) {
             tintColor="#17CB86"
           />
         }
+        contentContainerStyle={{ paddingBottom: 120 }}
       >
         {/* Header */}
         <View className="px-6 py-4 border-b border-border">
@@ -135,17 +136,7 @@ export function HomeScreen({ navigation }: Props) {
 
         {/* Lista de Compras */}
         <View className="px-6 pb-6">
-          <View className="flex-row justify-between items-center mb-4">
-            <Text className="text-text text-lg font-semibold">
-              Lista de Compras
-            </Text>
-            <TouchableOpacity
-              onPress={handleCreatePurchase}
-              className="p-2 bg-primary rounded-lg"
-            >
-              <Ionicons name="add" size={24} color="#FFFFFF" />
-            </TouchableOpacity>
-          </View>
+          <Text className="text-text text-lg font-semibold mb-4">Lista de Compras</Text>
 
           {/* Filtros */}
           <SegmentedControl
@@ -155,39 +146,39 @@ export function HomeScreen({ navigation }: Props) {
             variant="tabs"
           />
 
-          {/* Busca */}
-          <View className="mt-4">
-            <TextInput
-              placeholder="Buscar compras..."
-              value={purchasesViewModel.searchTerm}
-              onChangeText={purchasesViewModel.setSearchTerm}
-              iconLeft="search-outline"
-            />
-          </View>
+          {/* sem busca no mockup */}
 
           {/* Lista */}
           <View className="mt-4">
-            {purchasesViewModel.filteredPurchases.length === 0 ? (
+            {purchasesViewModel.groupedByDate.length === 0 ? (
               <View className="py-8 items-center">
                 <Ionicons name="cart-outline" size={48} color="#A7A7A8" />
-                <Text className="text-muted text-center mt-2">
-                  Nenhuma compra encontrada
-                </Text>
+                <Text className="text-muted text-center mt-2">Nenhuma compra encontrada</Text>
               </View>
             ) : (
-              purchasesViewModel.filteredPurchases.map((purchase) => (
-                <CardPurchase
-                  key={purchase.id}
-                  purchase={purchase}
-                  onPress={() => handlePurchasePress(purchase.id)}
-                  onPay={() => handlePayPurchase(purchase.id)}
-                  showHistory={purchasesViewModel.activeFilter === 'HISTORICO'}
-                />
+              purchasesViewModel.groupedByDate.map((group) => (
+                <View key={group.date} className="mb-4">
+                  <Text className="text-muted text-sm mb-2">Histórico do dia {group.label}</Text>
+                  {group.items.map((purchase) => (
+                    <CardPurchase
+                      key={purchase.id}
+                      purchase={purchase}
+                      onPress={() => handlePurchasePress(purchase.id)}
+                      onPay={() => handlePayPurchase(purchase.id)}
+                    />
+                  ))}
+                </View>
               ))
             )}
           </View>
+
+          {/* Espaço final para não cobrir cards pelo CTA fixo */}
+          <View className="h-2" />
         </View>
       </ScrollView>
+
+      {/* CTA fixo com safe-area */}
+      <BottomCTA title="Compra nova" onPress={handleCreatePurchase} />
     </SafeAreaView>
   );
 }

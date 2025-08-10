@@ -84,7 +84,7 @@ export function usePurchasesListViewModel() {
   const filterPurchases = () => {
     let filtered: Purchase[] = [];
 
-    if (state.activeFilter === 'HISTORICO') {
+    if (state.activeFilter === 'PAGO') {
       filtered = state.paymentHistory;
     } else if (state.activeFilter === 'TODAS') {
       filtered = state.purchases;
@@ -142,11 +142,26 @@ export function usePurchasesListViewModel() {
 
   const getFilterOptions = () => [
     { key: 'TODAS' as const, label: 'Todas' },
-    { key: 'ANDAMENTO' as const, label: 'Em Andamento' },
-    { key: 'ATRASADO' as const, label: 'Atrasadas' },
     { key: 'PAGO' as const, label: 'Pagas' },
-    { key: 'HISTORICO' as const, label: 'Histórico' },
+    { key: 'ATRASADO' as const, label: 'Atrasadas' },
+    { key: 'ANDAMENTO' as const, label: 'Andamento' },
   ];
+
+  const groupedByDate = (() => {
+    const list = state.filteredPurchases;
+    const groups: Record<string, Purchase[]> = {};
+    for (const p of list) {
+      const key = (p.purchaseDate || p.createdAt).split('T')[0];
+      if (!groups[key]) groups[key] = [];
+      groups[key].push(p);
+    }
+    const order = Object.keys(groups).sort((a, b) => (a < b ? 1 : -1));
+    return order.map((date) => ({
+      date,
+      label: new Date(date).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long' }),
+      items: groups[date],
+    }));
+  })();
 
   return {
     ...state,
@@ -156,5 +171,6 @@ export function usePurchasesListViewModel() {
     payPurchase,
     deletePurchase,
     getFilterOptions,
+    groupedByDate,
   };
 }

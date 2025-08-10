@@ -68,7 +68,7 @@ export function AuthScreen({ navigation }: Props) {
         className="flex-1"
       >
         <ScrollView
-          contentContainerStyle={{ flexGrow: 1 }}
+          contentContainerStyle={{ flexGrow: 1, paddingBottom: 16 }}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >

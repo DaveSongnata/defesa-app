@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { View, ActivityIndicator } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { AuthService } from '../services/authService';
 import { initializeDatabase } from '../db';
 
@@ -58,12 +59,28 @@ export function AppNavigator() {
 
   switch (currentScreen) {
     case 'Auth':
-      return <AuthScreen navigation={navigationProps} />;
+      return (
+        <SafeAreaView className="flex-1 bg-background">
+          <AuthScreen navigation={navigationProps} />
+        </SafeAreaView>
+      );
     case 'Home':
-      return <HomeScreen navigation={navigationProps} />;
+      return (
+        <SafeAreaView className="flex-1 bg-background">
+          <HomeScreen navigation={navigationProps} />
+        </SafeAreaView>
+      );
     case 'PurchaseForm':
-      return <PurchaseFormScreen navigation={navigationProps} route={{ params: {} }} />;
+      return (
+        <SafeAreaView className="flex-1 bg-background">
+          <PurchaseFormScreen navigation={navigationProps} route={{ params: {} }} />
+        </SafeAreaView>
+      );
     default:
-      return <AuthScreen navigation={navigationProps} />;
+      return (
+        <SafeAreaView className="flex-1 bg-background">
+          <AuthScreen navigation={navigationProps} />
+        </SafeAreaView>
+      );
   }
 }

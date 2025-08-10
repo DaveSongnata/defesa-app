@@ -97,7 +97,7 @@ export function PurchaseFormScreen({ navigation, route }: Props) {
       >
         <ScrollView
           className="flex-1"
-          contentContainerStyle={{ padding: 24 }}
+          contentContainerStyle={{ padding: 24, paddingBottom: 32 }}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >

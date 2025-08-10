@@ -5,7 +5,19 @@ const config = getDefaultConfig(__dirname, {
   isCSSEnabled: true,
 });
 
-module.exports = withNativeWind(config, { 
+// Suporte a SVG como componente (react-native-svg-transformer)
+config.transformer = {
+  ...config.transformer,
+  babelTransformerPath: require.resolve('react-native-svg-transformer'),
+};
+
+config.resolver = {
+  ...config.resolver,
+  assetExts: config.resolver.assetExts.filter((ext) => ext !== 'svg'),
+  sourceExts: [...config.resolver.sourceExts, 'svg'],
+};
+
+module.exports = withNativeWind(config, {
   input: './src/theme/global.css',
   configPath: './tailwind.config.js',
 });

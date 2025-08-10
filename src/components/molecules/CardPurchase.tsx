@@ -1,17 +1,16 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Button } from '../atoms/Button';
-import { Badge } from '../atoms/Badge';
+import ReceiptIcon from '../../assets/images/receipt.svg';
 import type { Purchase } from '../../models/types';
-import { formatDateDisplay, formatCurrency } from '../../utils/format';
+import { formatDateDisplay, formatCurrencyNoSymbol, formatDayMonth } from '../../utils/format';
+import { useBreakpoints } from '../../hooks/useBreakpoints';
 
 interface CardPurchaseProps {
   purchase: Purchase;
   onPress: () => void;
   onPay?: () => void;
   onEdit?: () => void;
-  showHistory?: boolean;
 }
 
 export function CardPurchase({
@@ -19,28 +18,16 @@ export function CardPurchase({
   onPress,
   onPay,
   onEdit,
-  showHistory = false,
 }: CardPurchaseProps) {
 
   const getStatusColor = () => {
     switch (purchase.status) {
       case 'PAGO':
-        return showHistory ? 'bg-success' : 'bg-surface';
+        return 'bg-success';
       case 'ATRASADO':
         return 'bg-danger';
       default:
         return 'bg-surface';
-    }
-  };
-
-  const getStatusBadgeVariant = (): 'success' | 'danger' | 'neutral' => {
-    switch (purchase.status) {
-      case 'PAGO':
-        return 'success';
-      case 'ATRASADO':
-        return 'danger';
-      default:
-        return 'neutral';
     }
   };
 
@@ -55,64 +42,79 @@ export function CardPurchase({
     }
   };
 
+  const getActionColor = () => (purchase.status === 'ANDAMENTO' ? 'text-primary' : 'text-white');
+  const getSecondaryTextClass = () =>
+    purchase.status === 'ANDAMENTO' ? 'text-muted' : 'text-white';
+  const getMetaTextClass = () =>
+    purchase.status === 'ANDAMENTO' ? 'text-muted' : 'text-white';
+
+  const { isSmallPhone, isTablet } = useBreakpoints();
+
   return (
     <TouchableOpacity
       onPress={onPress}
-      className={`rounded-lg p-4 mb-3 border border-border ${getStatusColor()}`}
+      className={`rounded-2xl px-4 py-3 mb-3 h-[71px] overflow-hidden ${getStatusColor()}`}
     >
-      <View className="flex-row justify-between items-start mb-2">
-        <View className="flex-1">
-          <Text className="text-text font-semibold text-base" numberOfLines={1}>
-            {purchase.name}
+      <View className="flex-row justify-between items-start">
+        <View className="flex-row items-center gap-2 flex-1 pr-2">
+          <View className="w-6 h-6 items-center justify-center">
+            <ReceiptIcon width={24} height={24} />
+          </View>
+          <View className="flex-1">
+            <Text
+              className="text-text font-semibold text-[13px] leading-4"
+              numberOfLines={1}
+              ellipsizeMode="tail"
+            >
+              {purchase.name}
+            </Text>
+          </View>
+        </View>
+        {purchase.status === 'PAGO' ? (
+          <Text className="text-white font-semibold ml-2">Pago</Text>
+        ) : (
+          onPay && (
+            <TouchableOpacity onPress={onPay} className="px-1 py-1 ml-2">
+              <Text className={`${getActionColor()} font-bold`}>Pagar</Text>
+            </TouchableOpacity>
+          )
+        )}
+      </View>
+
+      <View className="flex-row justify-between items-center mt-0.5">
+        <View className="max-w-[75%]">
+          <Text className="text-white font-bold text-[13px] leading-4" numberOfLines={1}>
+            {formatCurrencyNoSymbol(purchase.priceCents)}
           </Text>
           {purchase.description && (
-            <Text className="text-muted text-sm mt-1" numberOfLines={2}>
+            <Text
+              className={`${getSecondaryTextClass()} text-[11px] mt-0.5`}
+              numberOfLines={1}
+              ellipsizeMode="tail"
+            >
               {purchase.description}
             </Text>
           )}
-        </View>
-        
-        <Badge count={0} variant={getStatusBadgeVariant()} label={getStatusLabel()} />
-      </View>
-
-      <View className="flex-row justify-between items-center">
-        <View>
-          <Text className="text-primary font-bold text-lg">
-            {formatCurrency(purchase.priceCents)}
-          </Text>
-          <Text className="text-muted text-xs mt-1">
-            Vencimento: {formatDateDisplay(purchase.dueDate)}
-          </Text>
-        </View>
-
-        <View className="flex-row gap-2">
-          {onEdit && purchase.status !== 'PAGO' && (
-            <TouchableOpacity
-              onPress={onEdit}
-              className="p-2 bg-inputBg rounded-lg"
+          {purchase.status === 'PAGO' ? null : purchase.status === 'ATRASADO' ? (
+            <Text className={`${getMetaTextClass()} text-[10px] mt-0.5`} numberOfLines={1}>
+              Atrasada
+            </Text>
+          ) : (
+            <Text
+              className={`${getMetaTextClass()} text-[10px] mt-0.5`}
+              numberOfLines={1}
+              ellipsizeMode="tail"
             >
-              <Ionicons name="pencil" size={20} color="#A7A7A8" />
-            </TouchableOpacity>
-          )}
-          
-          {onPay && purchase.status !== 'PAGO' && (
-            <Button
-              title="Pagar"
-              variant="primary"
-              onPress={onPay}
-              className="px-4 py-2 min-h-0"
-            />
+              Vencimento: {formatDayMonth(purchase.dueDate)}
+            </Text>
           )}
         </View>
+        {onEdit && purchase.status !== 'PAGO' && (
+          <TouchableOpacity onPress={onEdit} className="p-2 bg-inputBg rounded-lg">
+            <Ionicons name="pencil" size={20} color="#A7A7A8" />
+          </TouchableOpacity>
+        )}
       </View>
-
-      {showHistory && purchase.paidAt && (
-        <View className="mt-2 pt-2 border-t border-border">
-          <Text className="text-success text-xs">
-            Pago em {formatDateDisplay(purchase.paidAt)}
-          </Text>
-        </View>
-      )}
     </TouchableOpacity>
   );
 }
