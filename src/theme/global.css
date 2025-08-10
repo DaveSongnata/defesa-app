@@ -1,0 +1,10 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Configurar Poppins como fonte padrão */
+@layer base {
+  * {
+    font-family: 'Poppins_400Regular', 'Poppins', system-ui, sans-serif;
+  }
+}
