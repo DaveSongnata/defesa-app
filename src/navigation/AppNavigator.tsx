@@ -19,6 +19,7 @@ export type RootStackParamList = {
 export function AppNavigator() {
   const [isLoading, setIsLoading] = useState(true);
   const [currentScreen, setCurrentScreen] = useState<keyof RootStackParamList>('Auth');
+  const [screenParams, setScreenParams] = useState<any>({});
 
   useEffect(() => {
     initApp();
@@ -41,6 +42,7 @@ export function AppNavigator() {
 
   const navigate = (screen: keyof RootStackParamList, params?: any) => {
     setCurrentScreen(screen);
+    setScreenParams(params || {});
   };
 
   if (isLoading) {
@@ -73,7 +75,7 @@ export function AppNavigator() {
     case 'PurchaseForm':
       return (
         <SafeAreaView className="flex-1 bg-background">
-          <PurchaseFormScreen navigation={navigationProps} route={{ params: {} }} />
+          <PurchaseFormScreen navigation={navigationProps} route={{ params: screenParams }} />
         </SafeAreaView>
       );
     default:

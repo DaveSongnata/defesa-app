@@ -13,7 +13,7 @@ import {
   TextInput, 
   CurrencyInput, 
   DatePickerField,
-  SegmentedControl,
+  StatusSelector,
   Button 
 } from '../components';
 import { usePurchaseFormViewModel } from '../viewmodels/usePurchaseFormViewModel';
@@ -32,6 +32,9 @@ interface Props {
 export function PurchaseFormScreen({ navigation, route }: Props) {
   const purchaseId = route.params?.purchaseId;
   const viewModel = usePurchaseFormViewModel(purchaseId);
+  
+  // Debug: log dos erros de validação
+  console.log('🚨 Erros na tela:', viewModel.validationErrors);
 
   const handleSave = async () => {
     const success = await viewModel.save();
@@ -80,14 +83,7 @@ export function PurchaseFormScreen({ navigation, route }: Props) {
         title={viewModel.isEditMode ? 'Editar Compra' : 'Nova Compra'}
         onBack={() => navigation.goBack()}
         rightAction={
-          viewModel.isEditMode ? (
-            <Button
-              title="Excluir"
-              variant="danger"
-              onPress={handleDelete}
-              className="px-4 py-2 min-h-0"
-            />
-          ) : undefined
+          undefined
         }
       />
 
@@ -119,7 +115,7 @@ export function PurchaseFormScreen({ navigation, route }: Props) {
           />
 
           <TextInput
-            label="Descrição (opcional)"
+            label="Descrição"
             placeholder="Adicione detalhes sobre a compra"
             value={viewModel.form.description}
             onChangeText={(text) => viewModel.updateField('description', text)}
@@ -144,11 +140,12 @@ export function PurchaseFormScreen({ navigation, route }: Props) {
             onChange={(date) => viewModel.updateField('purchaseDate', date)}
             error={viewModel.validationErrors.purchaseDate}
             maxDate={new Date()}
+            placeholder="Selecione a data de compra"
           />
 
           <DatePickerField
-            label="Data de Vencimento (opcional)"
-            value={viewModel.form.dueDate || new Date()}
+            label="Data de Vencimento"
+            value={viewModel.form.dueDate}
             onChange={(date) => viewModel.updateField('dueDate', date)}
             error={viewModel.validationErrors.dueDate}
             placeholder="Selecione a data de vencimento"
@@ -156,31 +153,45 @@ export function PurchaseFormScreen({ navigation, route }: Props) {
 
           <View className="mb-4">
             <Text className="text-text text-sm font-medium mb-2">Status</Text>
-            <SegmentedControl
-              options={viewModel.getStatusOptions()}
+            <StatusSelector
               value={viewModel.form.status}
               onChange={(status) => viewModel.updateField('status', status)}
+              error={viewModel.validationErrors.status}
             />
-            {viewModel.validationErrors.status && (
-              <Text className="text-danger text-xs mt-1">
-                {viewModel.validationErrors.status}
-              </Text>
-            )}
           </View>
 
           <View className="mt-6 gap-3">
-            <Button
-              title={viewModel.isEditMode ? 'Salvar Alterações' : 'Criar Compra'}
-              onPress={handleSave}
-              loading={viewModel.isSaving}
-            />
-            
-            <Button
-              title="Cancelar"
-              variant="secondary"
-              onPress={() => navigation.goBack()}
-              disabled={viewModel.isSaving}
-            />
+            {viewModel.isEditMode ? (
+              <>
+                <Button
+                  title="Salvar"
+                  onPress={handleSave}
+                  loading={viewModel.isSaving}
+                  className="bg-[#13C782]"
+                />
+                <Button
+                  title="Excluir"
+                  variant="danger"
+                  onPress={handleDelete}
+                  disabled={viewModel.isSaving}
+                  className="bg-[#FB4646]"
+                />
+              </>
+            ) : (
+              <>
+                <Button
+                  title="Criar Compra"
+                  onPress={handleSave}
+                  loading={viewModel.isSaving}
+                />
+                <Button
+                  title="Cancelar"
+                  variant="secondary"
+                  onPress={() => navigation.goBack()}
+                  disabled={viewModel.isSaving}
+                />
+              </>
+            )}
           </View>
         </ScrollView>
       </KeyboardAvoidingView>

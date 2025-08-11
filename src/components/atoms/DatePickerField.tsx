@@ -7,7 +7,7 @@ import { ptBR } from 'date-fns/locale';
 
 interface DatePickerFieldProps {
   label: string;
-  value: Date | string;
+  value: Date | string | undefined;
   onChange: (date: Date) => void;
   error?: string;
   minDate?: Date;
@@ -26,8 +26,8 @@ export function DatePickerField({
 }: DatePickerFieldProps) {
   const [show, setShow] = useState(false);
 
-  const dateValue = typeof value === 'string' ? new Date(value) : value;
-  const isValidDate = !isNaN(dateValue.getTime());
+  const dateValue = value ? (typeof value === 'string' ? new Date(value) : value) : null;
+  const isValidDate = dateValue && !isNaN(dateValue.getTime());
 
   const handleChange = (event: any, selectedDate?: Date) => {
     setShow(Platform.OS === 'ios');
@@ -36,7 +36,7 @@ export function DatePickerField({
     }
   };
 
-  const formattedDate = isValidDate
+  const formattedDate = isValidDate && dateValue
     ? format(dateValue, 'dd/MM/yyyy', { locale: ptBR })
     : '';
 
@@ -46,7 +46,7 @@ export function DatePickerField({
         <Text className="text-text text-sm font-medium mb-2">{label}</Text>
         <View className={`bg-inputBg rounded-lg border border-border ${error ? 'border-danger' : ''}`}>
           <DateTimePicker
-            value={isValidDate ? dateValue : new Date()}
+            value={isValidDate && dateValue ? dateValue : new Date()}
             mode="date"
             display="spinner"
             onChange={handleChange}
@@ -74,7 +74,7 @@ export function DatePickerField({
       
       {show && (
         <DateTimePicker
-          value={isValidDate ? dateValue : new Date()}
+          value={isValidDate && dateValue ? dateValue : new Date()}
           mode="date"
           display="default"
           onChange={handleChange}

@@ -21,9 +21,9 @@ export function BottomCTA({ title, onPress, disabled, style, ...rest }: BottomCT
           right: 0,
           bottom: 0,
           paddingHorizontal: 24,
-          paddingBottom: Math.max(insets.bottom, 12),
-          paddingTop: 12,
-          backgroundColor: 'rgba(20,20,20,0.6)',
+          paddingBottom: Math.max(insets.bottom, 8),
+          paddingTop: 8,
+          backgroundColor: '#141414',
         },
         style,
       ]}

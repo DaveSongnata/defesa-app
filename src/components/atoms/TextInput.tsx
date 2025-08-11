@@ -28,25 +28,25 @@ export function TextInput({
   return (
     <View className="mb-6">
       {label && (
-        <Text className="text-gray-700 text-sm font-poppins-medium mb-2">{label}</Text>
+        <Text className="text-text text-sm font-poppins-medium mb-2">{label}</Text>
       )}
       
-      <View className={`bg-gray-50 rounded-lg border-b-2 border-gray-200 flex-row items-center px-4 ${error ? 'border-danger' : ''}`}>
+      <View className={`bg-inputBg rounded-lg flex-row items-center px-4 ${error ? 'border border-danger' : ''}`}>
         {iconLeft && (
           <View className="mr-3">
-            <Ionicons name={iconLeft} size={20} color="#6B7280" />
+            <Ionicons name={iconLeft} size={20} color="#A7A7A8" />
           </View>
         )}
         
         <RNTextInput
-          className={`flex-1 py-4 text-gray-900 font-poppins ${className || ''}`}
-          placeholderTextColor="#9CA3AF"
+          className={`flex-1 py-4 text-text font-poppins ${className || ''}`}
+          placeholderTextColor="#A7A7A8"
           {...props}
         />
         
         {iconRight && (
           <TouchableOpacity onPress={onIconRightPress} disabled={!onIconRightPress}>
-            <Ionicons name={iconRight} size={20} color="#6B7280" />
+            <Ionicons name={iconRight} size={20} color="#A7A7A8" />
           </TouchableOpacity>
         )}
       </View>

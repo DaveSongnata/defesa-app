@@ -10,3 +10,5 @@ export { SegmentedControl } from './molecules/SegmentedControl';
 export { CardPurchase } from './molecules/CardPurchase';
 export { HeaderWithBack } from './molecules/HeaderWithBack';
 export { BottomCTA } from './molecules/BottomCTA';
+export { SwipeableTabs } from './molecules/SwipeableTabs';
+export { StatusSelector } from './molecules/StatusSelector';

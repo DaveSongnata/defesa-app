@@ -14,8 +14,8 @@ interface PurchaseFormState {
   form: {
     name: string;
     description: string;
-    priceCents: number;
-    purchaseDate: Date;
+    priceCents?: number;
+    purchaseDate?: Date;
     dueDate?: Date;
     status: PurchaseStatus;
   };
@@ -35,14 +35,80 @@ export function usePurchaseFormViewModel(purchaseId?: string) {
     form: {
       name: '',
       description: '',
-      priceCents: 0,
-      purchaseDate: new Date(),
+      priceCents: undefined,
+      purchaseDate: undefined,
       dueDate: undefined,
       status: 'ANDAMENTO',
     },
   });
 
   const [validationErrors, setValidationErrors] = useState<ValidationErrors>({});
+
+  const validateField = useCallback((field: string, value: any, currentForm: typeof state.form) => {
+    console.log(`🔍 Validando campo ${field}:`, value);
+    
+    // Validação específica por campo
+    let errorMessage = '';
+    
+    switch (field) {
+      case 'name':
+        const nameValue = value as string;
+        if (!nameValue || nameValue.trim().length === 0) {
+          errorMessage = 'Nome do produto é obrigatório';
+        } else if (nameValue.length > 200) {
+          errorMessage = 'Nome deve ter no máximo 200 caracteres';
+        }
+        break;
+        
+      case 'description':
+        const descValue = value as string;
+        if (!descValue || descValue.trim().length === 0) {
+          errorMessage = 'Descrição é obrigatória';
+        } else if (descValue.length > 500) {
+          errorMessage = 'Descrição deve ter no máximo 500 caracteres';
+        }
+        break;
+        
+      case 'priceCents':
+        const priceValue = value as number;
+        if (!priceValue || priceValue <= 0) {
+          errorMessage = 'Valor deve ser maior que zero';
+        }
+        break;
+        
+      case 'purchaseDate':
+        if (!value) {
+          errorMessage = 'Data de compra é obrigatória';
+        }
+        break;
+        
+      case 'dueDate':
+        if (!value) {
+          errorMessage = 'Data de vencimento é obrigatória';
+        }
+        break;
+        
+      case 'status':
+        if (!value || !['PAGO', 'ANDAMENTO', 'ATRASADO'].includes(value as string)) {
+          errorMessage = 'Selecione um status válido';
+        }
+        break;
+    }
+    
+    console.log(`🔍 Campo ${field} - Erro:`, errorMessage || 'Sem erro');
+    
+    // Atualizar ou limpar erro do campo
+    setValidationErrors(prev => {
+      const newErrors = { ...prev };
+      if (errorMessage) {
+        newErrors[field] = errorMessage;
+      } else {
+        delete newErrors[field];
+      }
+      console.log('🚨 Erros atualizados:', newErrors);
+      return newErrors;
+    });
+  }, []);
 
   useEffect(() => {
     if (purchaseId) {
@@ -85,66 +151,114 @@ export function usePurchaseFormViewModel(purchaseId?: string) {
     field: K,
     value: typeof state.form[K]
   ) => {
-    setState(prev => ({
-      ...prev,
-      form: {
-        ...prev.form,
-        [field]: value,
-      },
-    }));
+    setState(prev => {
+      const newState = {
+        ...prev,
+        form: {
+          ...prev.form,
+          [field]: value,
+        },
+      };
+      
+      // Validar campo individual em tempo real com o novo estado
+      validateField(field as string, value, newState.form);
+      
+      return newState;
+    });
+  }, [validateField]);
+
+  const validateAllFields = () => {
+    console.log('🔍 Validando todos os campos:', state.form);
     
-    // Limpar erro de validação do campo
-    if (validationErrors[field]) {
-      setValidationErrors(prev => {
-        const newErrors = { ...prev };
-        delete newErrors[field];
-        return newErrors;
-      });
-    }
-  }, [validationErrors]);
+    // Validar cada campo individualmente
+    validateField('name', state.form.name, state.form);
+    validateField('description', state.form.description, state.form);
+    validateField('priceCents', state.form.priceCents, state.form);
+    validateField('purchaseDate', state.form.purchaseDate, state.form);
+    validateField('dueDate', state.form.dueDate, state.form);
+    validateField('status', state.form.status, state.form);
+  };
 
   const validate = (): boolean => {
-    try {
-      const data: PurchaseInput = {
-        name: state.form.name,
-        description: state.form.description || undefined,
-        priceCents: state.form.priceCents,
-        purchaseDate: toDateOnlyString(state.form.purchaseDate)!,
-        dueDate: toDateOnlyString(state.form.dueDate),
-        status: state.form.status,
-      };
-
-      purchaseSchema.parse(data);
-      setValidationErrors({});
-      return true;
-    } catch (error) {
-      if (error instanceof ZodError) {
-        const errors: ValidationErrors = {};
-        error.errors.forEach(err => {
-          if (err.path[0]) {
-            errors[err.path[0].toString()] = err.message;
-          }
-        });
-        setValidationErrors(errors);
+    // Aguardar um pouco para que os erros sejam atualizados
+    setTimeout(() => {
+      const hasErrors = Object.keys(validationErrors).length > 0;
+      console.log('🔍 Verificando se há erros:', validationErrors, 'HasErrors:', hasErrors);
+      
+      if (hasErrors) {
+        setState(prev => ({
+          ...prev,
+          error: 'Por favor, corrija os erros no formulário'
+        }));
+      } else {
+        setState(prev => ({ ...prev, error: null }));
       }
-      return false;
-    }
+    }, 100);
+    
+    // Retornar baseado no estado atual dos erros
+    const hasErrors = Object.keys(validationErrors).length > 0;
+    console.log('🔍 Resultado da validação:', !hasErrors);
+    return !hasErrors;
   };
 
   const save = async (): Promise<boolean> => {
-    if (!validate()) {
+    // Validar todos os campos de uma vez
+    const errors: ValidationErrors = {};
+    
+    // Validar nome
+    if (!state.form.name || state.form.name.trim().length === 0) {
+      errors.name = 'Nome do produto é obrigatório';
+    }
+    
+    // Validar descrição
+    if (!state.form.description || state.form.description.trim().length === 0) {
+      errors.description = 'Descrição é obrigatória';
+    }
+    
+    // Validar preço
+    if (!state.form.priceCents || state.form.priceCents <= 0) {
+      errors.priceCents = 'Valor deve ser maior que zero';
+    }
+    
+    // Validar data de compra
+    if (!state.form.purchaseDate) {
+      errors.purchaseDate = 'Data de compra é obrigatória';
+    }
+    
+    // Validar data de vencimento
+    if (!state.form.dueDate) {
+      errors.dueDate = 'Data de vencimento é obrigatória';
+    }
+    
+    // Validar status
+    if (!state.form.status || !['PAGO', 'ANDAMENTO', 'ATRASADO'].includes(state.form.status)) {
+      errors.status = 'Selecione um status válido';
+    }
+    
+    // Atualizar erros
+    setValidationErrors(errors);
+    
+    // Se há erros, mostrar mensagem e não prosseguir
+    if (Object.keys(errors).length > 0) {
+      setState(prev => ({
+        ...prev,
+        error: 'Por favor, corrija os erros no formulário'
+      }));
       return false;
     }
+    
+    // Limpar mensagem de erro se tudo ok
+    setState(prev => ({ ...prev, error: null }));
 
     try {
       setState(prev => ({ ...prev, isSaving: true, error: null }));
 
       const purchaseData = {
         name: state.form.name,
-        description: state.form.description || undefined,
-        priceCents: state.form.priceCents,
-        purchaseDate: toDateOnlyString(state.form.purchaseDate)!,
-        dueDate: toDateOnlyString(state.form.dueDate),
+        description: state.form.description || '',
+        priceCents: state.form.priceCents || 0,
+        purchaseDate: state.form.purchaseDate ? toDateOnlyString(state.form.purchaseDate)! : '',
+        dueDate: state.form.dueDate ? toDateOnlyString(state.form.dueDate)! : '',
         status: state.form.status,
       };
 

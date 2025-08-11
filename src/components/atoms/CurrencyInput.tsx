@@ -3,7 +3,7 @@ import { TextInput, TextInputProps } from './TextInput';
 import { formatCurrency } from '../../utils/format';
 
 interface CurrencyInputProps extends Omit<TextInputProps, 'value' | 'onChangeText'> {
-  value: number; // valor em centavos
+  value?: number; // valor em centavos
   onChangeValue: (value: number) => void;
 }
 
@@ -23,7 +23,7 @@ export function CurrencyInput({
     onChangeValue(cents);
   }, [onChangeValue]);
 
-  const displayValue = formatCurrency(value);
+  const displayValue = value ? formatCurrency(value) : '';
 
   return (
     <TextInput

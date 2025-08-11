@@ -38,24 +38,29 @@ export const registerSchema = z.object({
 export const purchaseSchema = z.object({
   name: z
     .string()
-    .min(1, 'Nome é obrigatório')
-    .max(200, 'Nome deve ter no máximo 200 caracteres'),
+    .min(1, 'Nome do produto é obrigatório')
+    .max(200, 'Nome deve ter no máximo 200 caracteres')
+    .trim(),
   description: z
     .string()
+    .min(1, 'Descrição é obrigatória')
     .max(500, 'Descrição deve ter no máximo 500 caracteres')
-    .optional(),
+    .trim(),
   priceCents: z
     .number()
     .int('Valor deve ser um número inteiro')
-    .positive('Valor deve ser positivo'),
+    .min(1, 'Valor deve ser maior que zero'),
   purchaseDate: z
     .string()
-    .regex(/^\d{4}-\d{2}-\d{2}$/, 'Data deve estar no formato YYYY-MM-DD'),
+    .min(1, 'Data de compra é obrigatória')
+    .regex(/^\d{4}-\d{2}-\d{2}$/, 'Data inválida'),
   dueDate: z
     .string()
-    .regex(/^\d{4}-\d{2}-\d{2}$/, 'Data deve estar no formato YYYY-MM-DD')
-    .optional(),
-  status: z.enum(['PAGO', 'ANDAMENTO', 'ATRASADO']),
+    .min(1, 'Data de vencimento é obrigatória')
+    .regex(/^\d{4}-\d{2}-\d{2}$/, 'Data inválida'),
+  status: z.enum(['PAGO', 'ANDAMENTO', 'ATRASADO'], {
+    errorMap: () => ({ message: 'Selecione um status válido' })
+  }),
 });
 
 // Tipos inferidos dos schemas

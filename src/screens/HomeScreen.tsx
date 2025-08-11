@@ -12,6 +12,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useDashboardViewModel } from '../viewmodels/useDashboardViewModel';
 import { usePurchasesListViewModel } from '../viewmodels/usePurchasesListViewModel';
 import { CardPurchase, SegmentedControl, BottomCTA } from '../components';
+import { useSwipeGesture } from '../hooks/useSwipeGesture';
 
 interface StatCardProps {
   title: string;
@@ -47,6 +48,26 @@ export function HomeScreen({ navigation }: Props) {
   const dashboardViewModel = useDashboardViewModel();
   const purchasesViewModel = usePurchasesListViewModel();
 
+  // Swipe gesture para mudar de aba
+  const swipeHandlers = useSwipeGesture({
+    onSwipeLeft: () => {
+      const filters = purchasesViewModel.getFilterOptions();
+      const currentIndex = filters.findIndex(f => f.key === purchasesViewModel.activeFilter);
+      if (currentIndex < filters.length - 1) {
+        const nextFilter = filters[currentIndex + 1].key;
+        purchasesViewModel.setActiveFilter(nextFilter as 'TODAS' | 'PAGO' | 'ATRASADO' | 'ANDAMENTO');
+      }
+    },
+    onSwipeRight: () => {
+      const filters = purchasesViewModel.getFilterOptions();
+      const currentIndex = filters.findIndex(f => f.key === purchasesViewModel.activeFilter);
+      if (currentIndex > 0) {
+        const prevFilter = filters[currentIndex - 1].key;
+        purchasesViewModel.setActiveFilter(prevFilter as 'TODAS' | 'PAGO' | 'ATRASADO' | 'ANDAMENTO');
+      }
+    },
+  });
+
   const handleLogout = async () => {
     await dashboardViewModel.logout();
     navigation.replace('Auth');
@@ -76,7 +97,7 @@ export function HomeScreen({ navigation }: Props) {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-background">
+    <View className="flex-1 bg-background">
       <ScrollView
         showsVerticalScrollIndicator={false}
         refreshControl={
@@ -93,7 +114,7 @@ export function HomeScreen({ navigation }: Props) {
         contentContainerStyle={{ paddingBottom: 120 }}
       >
         {/* Header */}
-        <View className="px-6 py-4 border-b border-border">
+        <View className="px-6 py-2 border-b border-border">
           <View className="flex-row justify-between items-center">
             <View>
               <Text className="text-muted text-sm">Olá,</Text>
@@ -111,7 +132,7 @@ export function HomeScreen({ navigation }: Props) {
         </View>
 
         {/* Stats Cards */}
-        <View className="px-6 py-4">
+        <View className="px-6 py-3">
           <Text className="text-text text-lg font-semibold mb-4">
             Atualizações
           </Text>
@@ -146,10 +167,8 @@ export function HomeScreen({ navigation }: Props) {
             variant="tabs"
           />
 
-          {/* sem busca no mockup */}
-
-          {/* Lista */}
-          <View className="mt-4">
+          {/* Lista com swipe */}
+          <View className="mt-4" {...swipeHandlers}>
             {purchasesViewModel.groupedByDate.length === 0 ? (
               <View className="py-8 items-center">
                 <Ionicons name="cart-outline" size={48} color="#A7A7A8" />
@@ -165,6 +184,7 @@ export function HomeScreen({ navigation }: Props) {
                       purchase={purchase}
                       onPress={() => handlePurchasePress(purchase.id)}
                       onPay={() => handlePayPurchase(purchase.id)}
+                      onEdit={() => handlePurchasePress(purchase.id)}
                     />
                   ))}
                 </View>
@@ -179,6 +199,6 @@ export function HomeScreen({ navigation }: Props) {
 
       {/* CTA fixo com safe-area */}
       <BottomCTA title="Compra nova" onPress={handleCreatePurchase} />
-    </SafeAreaView>
+    </View>
   );
 }

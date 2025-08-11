@@ -109,11 +109,7 @@ export function CardPurchase({
             </Text>
           )}
         </View>
-        {onEdit && purchase.status !== 'PAGO' && (
-          <TouchableOpacity onPress={onEdit} className="p-2 bg-inputBg rounded-lg">
-            <Ionicons name="pencil" size={20} color="#A7A7A8" />
-          </TouchableOpacity>
-        )}
+      
       </View>
     </TouchableOpacity>
   );
