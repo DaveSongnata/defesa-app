@@ -65,7 +65,7 @@ export function SwipeableTabs({ options, value, onChange, children }: SwipeableT
   return (
     <View className="flex-1">
       {/* Tab Headers */}
-      <View className="flex-row bg-surface rounded-lg mx-6 mb-4 p-1">
+      <View className="flex-row bg-surface mb-4 p-1">
         {options.map((option, index) => (
           <TouchableOpacity
             key={option.key}

@@ -21,16 +21,16 @@ export function SegmentedControl<T extends string>({
 }: SegmentedControlProps<T>) {
   if (variant === 'tabs') {
     return (
-      <View className="flex-row border-b border-border">
+      <View className="flex-row border-b border-border justify-between">
         {options.map((option) => {
           const isSelected = option.key === value;
           return (
             <TouchableOpacity
               key={option.key}
               onPress={() => onChange(option.key)}
-              className={`mr-6 pb-2 ${isSelected ? 'border-b-2 border-primary' : 'border-b-2 border-transparent'}`}
+              className={`flex-1 pb-2 ${isSelected ? 'border-b-2 border-primary' : 'border-b-2 border-transparent'}`}
             >
-              <Text className={`text-xs font-poppins-medium ${isSelected ? 'text-primary' : 'text-muted'}`}>
+              <Text className={`text-center text-xs font-poppins-medium ${isSelected ? 'text-primary' : 'text-muted'}`}>
                 {option.label}
               </Text>
             </TouchableOpacity>
