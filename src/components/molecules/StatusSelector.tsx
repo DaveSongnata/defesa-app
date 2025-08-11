@@ -22,19 +22,19 @@ export function StatusSelector({ value, onChange, error }: StatusSelectorProps) 
 
   return (
     <View>
-      <View className="flex-row gap-2">
+      <View className="flex-row gap-2 justify-center px-8">
         {options.map((option) => (
           <TouchableOpacity
             key={option.key}
             onPress={() => onChange(option.key)}
-            className={`flex-1 py-3 px-4 rounded-lg border ${
+            className={`py-2 px-3 rounded-lg border ${
               value === option.key
                 ? 'bg-primary border-primary'
                 : 'bg-inputBg border-border'
             }`}
           >
             <Text
-              className={`text-center text-sm font-medium ${
+              className={`text-center text-xs font-medium ${
                 value === option.key ? 'text-white' : 'text-muted'
               }`}
             >
