@@ -1,6 +1,7 @@
 // Atoms
 export { Button } from './atoms/Button';
 export { Badge } from './atoms/Badge';
+export { Text, PoppinsText } from './atoms/PoppinsText';
 export { TextInput } from './atoms/TextInput';
 export { CurrencyInput } from './atoms/CurrencyInput';
 export { DatePickerField } from './atoms/DatePickerField';

@@ -32,9 +32,6 @@ interface Props {
 export function PurchaseFormScreen({ navigation, route }: Props) {
   const purchaseId = route.params?.purchaseId;
   const viewModel = usePurchaseFormViewModel(purchaseId);
-  
-  // Debug: log dos erros de validação
-  console.log('🚨 Erros na tela:', viewModel.validationErrors);
 
   const handleSave = async () => {
     const success = await viewModel.save();
@@ -99,7 +96,7 @@ export function PurchaseFormScreen({ navigation, route }: Props) {
         >
           {viewModel.error && (
             <View className="bg-danger/20 p-3 rounded-lg mb-4">
-              <Text className="text-danger text-sm">
+              <Text className="text-danger text-sm" style={{ fontFamily: 'Poppins-Regular' }}>
                 {viewModel.error}
               </Text>
             </View>
@@ -152,7 +149,7 @@ export function PurchaseFormScreen({ navigation, route }: Props) {
           />
 
           <View className="mb-4">
-            <Text className="text-text text-sm font-medium mb-2">Status</Text>
+            <Text className="text-text text-sm mb-2" style={{ fontFamily: 'Poppins-Medium' }}>Status</Text>
             <StatusSelector
               value={viewModel.form.status}
               onChange={(status) => viewModel.updateField('status', status)}

@@ -24,10 +24,10 @@ module.exports = {
         warning: '#502224',
       },
       fontFamily: {
-        'poppins': ['Poppins_400Regular', 'Poppins', 'sans-serif'],
-        'poppins-medium': ['Poppins_500Medium', 'Poppins', 'sans-serif'],
-        'poppins-semibold': ['Poppins_600SemiBold', 'Poppins', 'sans-serif'],
-        'poppins-bold': ['Poppins_700Bold', 'Poppins', 'sans-serif'],
+        'poppins': ['Poppins-Regular'],
+        'poppins-medium': ['Poppins-Medium'],
+        'poppins-semibold': ['Poppins-SemiBold'],
+        'poppins-bold': ['Poppins-Bold'],
       },
       fontSize: {
         'xs': ['12px', '16px'],

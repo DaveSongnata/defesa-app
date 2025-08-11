@@ -1,7 +1,6 @@
 import React from 'react';
 import {
   View,
-  Text,
   ScrollView,
   RefreshControl,
   TouchableOpacity,
@@ -11,7 +10,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useDashboardViewModel } from '../viewmodels/useDashboardViewModel';
 import { usePurchasesListViewModel } from '../viewmodels/usePurchasesListViewModel';
-import { CardPurchase, SegmentedControl, BottomCTA } from '../components';
+import { CardPurchase, SegmentedControl, BottomCTA, Text } from '../components';
 import { useSwipeGesture } from '../hooks/useSwipeGesture';
 
 interface StatCardProps {
@@ -27,10 +26,10 @@ function StatCard({ title, count, value, color, icon }: StatCardProps) {
     <View className={`${color} rounded-lg p-4 flex-1`}>
       <View className="flex-row items-center justify-between mb-2">
         <Ionicons name={icon} size={24} color="#FFFFFF" />
-        <Text className="text-white text-2xl font-bold">{count}</Text>
+        <Text weight="bold" className="text-white text-2xl">{count}</Text>
       </View>
-      <Text className="text-white text-lg font-semibold">{value}</Text>
-      <Text className="text-white/80 text-sm mt-1">{title}</Text>
+      <Text weight="semibold" className="text-white text-lg">{value}</Text>
+      <Text weight="regular" className="text-white/80 text-sm mt-1">{title}</Text>
     </View>
   );
 }
@@ -117,8 +116,8 @@ export function HomeScreen({ navigation }: Props) {
         <View className="px-6 py-2 border-b border-border">
           <View className="flex-row justify-between items-center">
             <View>
-              <Text className="text-muted text-sm">Olá,</Text>
-              <Text className="text-text text-xl font-semibold">
+              <Text className="text-muted text-sm" style={{ fontFamily: 'Poppins-Regular' }}>Olá,</Text>
+              <Text className="text-text text-xl" style={{ fontFamily: 'Poppins-SemiBold' }}>
                 {dashboardViewModel.user?.name || 'Usuário'}
               </Text>
             </View>
@@ -133,7 +132,7 @@ export function HomeScreen({ navigation }: Props) {
 
         {/* Stats Cards */}
         <View className="px-6 py-3">
-          <Text className="text-text text-lg font-semibold mb-4">
+          <Text className="text-text text-lg mb-4" style={{ fontFamily: 'Poppins-SemiBold' }}>
             Atualizações
           </Text>
           
@@ -157,7 +156,7 @@ export function HomeScreen({ navigation }: Props) {
 
         {/* Lista de Compras */}
         <View className="px-6 pb-6">
-          <Text className="text-text text-lg font-semibold mb-4">Lista de Compras</Text>
+          <Text className="text-text text-lg mb-4" style={{ fontFamily: 'Poppins-SemiBold' }}>Lista de Compras</Text>
 
           {/* Filtros */}
           <SegmentedControl
@@ -172,12 +171,12 @@ export function HomeScreen({ navigation }: Props) {
             {purchasesViewModel.groupedByDate.length === 0 ? (
               <View className="py-8 items-center">
                 <Ionicons name="cart-outline" size={48} color="#A7A7A8" />
-                <Text className="text-muted text-center mt-2">Nenhuma compra encontrada</Text>
+                <Text className="text-muted text-center mt-2" style={{ fontFamily: 'Poppins-Regular' }}>Nenhuma compra encontrada</Text>
               </View>
             ) : (
               purchasesViewModel.groupedByDate.map((group) => (
                 <View key={group.date} className="mb-4">
-                  <Text className="text-muted text-sm mb-2">Histórico do dia {group.label}</Text>
+                  <Text className="text-muted text-sm mb-2" style={{ fontFamily: 'Poppins-Regular' }}>Histórico do dia {group.label}</Text>
                   {group.items.map((purchase) => (
                     <CardPurchase
                       key={purchase.id}

@@ -5,6 +5,7 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
+  StyleSheet,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { TextInput, Button } from '../components';
@@ -74,13 +75,29 @@ export function AuthScreen({ navigation }: Props) {
         >
           <View className="flex-1 justify-center px-8 py-12">
             <View className="bg-white rounded-2xl p-8 mx-4">
-              <Text className="text-black text-2xl font-poppins-bold mb-8">
+              <Text className="text-black text-2xl mb-2" style={{ fontFamily: 'Poppins_700Bold' }}>
                 {authViewModel.isRegisterMode ? 'Criar Conta' : 'Login'}
               </Text>
+              
+              {/* TESTE VISUAL DE FONTES - REMOVER DEPOIS */}
+              <View className="mb-4 p-2 bg-gray-100 rounded">
+                <Text style={{ fontSize: 16, color: 'red', fontWeight: 'bold' }}>
+                  TESTE FONTES (underscore):
+                </Text>
+                <Text style={{ fontSize: 14, color: 'black', fontFamily: 'Poppins_400Regular' }}>
+                  1. Poppins_400Regular
+                </Text>
+                <Text style={{ fontSize: 14, color: 'black', fontFamily: 'Poppins_700Bold' }}>
+                  2. Poppins_700Bold (deve ser BOLD)
+                </Text>
+                <Text style={{ fontSize: 14, color: 'black' }}>
+                  3. SEM fontFamily (fonte padrão Android)
+                </Text>
+              </View>
 
               {authViewModel.error && (
                 <View className="bg-red-50 border border-red-200 p-3 rounded-lg mb-4">
-                  <Text className="text-red-600 text-sm text-center font-poppins">
+                  <Text className="text-red-600 text-sm text-center" style={{ fontFamily: 'Poppins-Regular' }}>
                     {authViewModel.error}
                   </Text>
                 </View>
@@ -141,7 +158,7 @@ export function AuthScreen({ navigation }: Props) {
 
               {!authViewModel.isRegisterMode && (
                 <View className="mt-4">
-                  <Text className="text-gray-500 text-center font-poppins">
+                  <Text className="text-gray-500 text-center" style={{ fontFamily: 'Poppins-Regular' }}>
                     Não tem uma conta?
                   </Text>
                   <Button
@@ -155,7 +172,7 @@ export function AuthScreen({ navigation }: Props) {
 
               {authViewModel.isRegisterMode && (
                 <View className="mt-4">
-                  <Text className="text-gray-500 text-center font-poppins">
+                  <Text className="text-gray-500 text-center" style={{ fontFamily: 'Poppins-Regular' }}>
                     Já tem uma conta?
                   </Text>
                   <Button
