@@ -79,21 +79,7 @@ export function AuthScreen({ navigation }: Props) {
                 {authViewModel.isRegisterMode ? 'Criar Conta' : 'Login'}
               </Text>
               
-              {/* TESTE VISUAL DE FONTES - REMOVER DEPOIS */}
-              <View className="mb-4 p-2 bg-gray-100 rounded">
-                <Text style={{ fontSize: 16, color: 'red', fontWeight: 'bold' }}>
-                  TESTE FONTES (underscore):
-                </Text>
-                <Text style={{ fontSize: 14, color: 'black', fontFamily: 'Poppins_400Regular' }}>
-                  1. Poppins_400Regular
-                </Text>
-                <Text style={{ fontSize: 14, color: 'black', fontFamily: 'Poppins_700Bold' }}>
-                  2. Poppins_700Bold (deve ser BOLD)
-                </Text>
-                <Text style={{ fontSize: 14, color: 'black' }}>
-                  3. SEM fontFamily (fonte padrão Android)
-                </Text>
-              </View>
+            
 
               {authViewModel.error && (
                 <View className="bg-red-50 border border-red-200 p-3 rounded-lg mb-4">
